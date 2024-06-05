@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { faker } from '@faker-js/faker';
+import { supabase } from '../../lib/supabase';
 
 ChartJS.register(
   CategoryScale,
@@ -65,6 +66,24 @@ export const data = {
   ],
 };
 const Home = () => {
+
+  async function fetchDashboardData() {
+    try {
+      const { data, error } = await supabase
+        .from('your_table_name') // Replace with your table name
+        .select('*'); // Or select specific columns if needed
+  
+      if (error) {
+        console.error('Error fetching data:', error);
+        return; // Handle errors gracefully
+      }
+  
+      return data;
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      return; // Handle errors gracefully
+    }
+  }
   const dashboardStats = [
     {
       icon: <StudentIcon />,

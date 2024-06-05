@@ -5,9 +5,10 @@ import { ReactComponent as CourseIcon } from '../../assets/icons/course-icon.svg
 import { ReactComponent as HostelIcon } from '../../assets/icons/hostel-icon.svg';
 import { ReactComponent as UserIcon } from '../../assets/icons/user-icon.svg';
 import Avatar from '../../assets/images/avatar.png';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { STORAGE_KEYS } from '../../utils/constants';
-
+import { supabase } from '../../lib/supabase';
+import { toast } from 'react-toastify';
 const Sidebar = () => {
   const sidebarMenu = [
     {
@@ -41,7 +42,7 @@ const Sidebar = () => {
       route: 'lecturers',
     },
   ];
-
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const isLinkActive = (baseRoute?: string) => {
     if (baseRoute === '' && pathname === '/dashboard') {
@@ -56,6 +57,19 @@ const Sidebar = () => {
   const firstName = localStorage.getItem(STORAGE_KEYS.FIRST_NAME);
   const lastName = localStorage.getItem(STORAGE_KEYS.LAST_NAME);
   const email = localStorage.getItem(STORAGE_KEYS.EMAIL);
+  const handleLogout = async() => {
+  
+    try {
+      let { error } = await supabase.auth.signOut()
+      toast.success('User Signed Out!', {
+        position: 'top-right',
+      });
+      navigate('/');
+      console.log('clicked')
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div className='w-[280px] my-3'>
       <div className='flex justify-between border-b px-3 pb-3 h-[70px]'>
@@ -63,7 +77,7 @@ const Sidebar = () => {
           <div className='bg-[#F9F9F9] w-10 h-10 rounded-md' />
           <p className='text-sm font-medium'>School portal</p>
         </div>
-        <div className='bg-[#FFF5F5] w-10 h-10 rounded-md flex items-center justify-center'>
+        <div onClick={handleLogout} className= ' cursor-pointer  bg-[#FFF5F5] w-10 h-10 rounded-md flex items-center justify-center'>
           <ArrowIcon />
         </div>
       </div>
